@@ -1,0 +1,63 @@
+{
+	"info": {
+		"_postman_id": "45b3cc2e-0d23-4f66-b184-a58f28b88dd9",
+		"name": "reactor-kafka",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/classic/event",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "happy birthday\r\n"
+				},
+				"url": {
+					"raw": "localhost:8080/classic/event/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"classic",
+						"event",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/event",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "happy birthday to you"
+				},
+				"url": {
+					"raw": "localhost:8080/event/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"event",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
