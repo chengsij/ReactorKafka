@@ -1,7 +1,6 @@
 package com.chengsij.webflux;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.reactivestreams.Publisher;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import reactor.kafka.sender.KafkaSender;
 import reactor.kafka.sender.SenderOptions;
 import reactor.kafka.sender.SenderRecord;
@@ -37,10 +35,9 @@ public class KafkaService<T> {
     sender = KafkaSender.create(configuration);
   }
 
-  public Flux<SenderResult<T>> sendMessages(Publisher<? extends SenderRecord<Integer, String, T>>  outboundRecords) {
-    return sender
-        .send(outboundRecords)
-        .doOnError(e -> log.error("Send failed", e));
+  public Flux<SenderResult<T>> sendMessages(
+      Publisher<? extends SenderRecord<Integer, String, T>> outboundRecords) {
+    return sender.send(outboundRecords).doOnError(e -> log.error("Send failed", e));
   }
 
   public void close() {

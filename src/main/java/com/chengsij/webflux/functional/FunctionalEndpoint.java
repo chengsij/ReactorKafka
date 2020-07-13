@@ -9,26 +9,23 @@ import org.springframework.web.reactive.function.server.RequestPredicate;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.*;
+import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
-/**
- * this class defines the routes of the application.
- */
-
+/** this class defines the routes of the application. */
 @Configuration
 @Profile("default")
 public class FunctionalEndpoint {
 
-    @Bean
-    RouterFunction<ServerResponse> routes(EventHandler handler) {
-        return route(i(POST("/event")), handler::publish);
-    }
+  @Value("kafka:bootStrapServer")
+  private static String BOOTSTRAP_SERVERS;
 
-    private static RequestPredicate i(RequestPredicate target) {
-        return new CaseInsensitiveRequestPredicate(target);
-    }
+  private static RequestPredicate i(RequestPredicate target) {
+    return new CaseInsensitiveRequestPredicate(target);
+  }
 
-    @Value("kafka:bootStrapServer")
-    private static String BOOTSTRAP_SERVERS;
+  @Bean
+  RouterFunction<ServerResponse> routes(EventHandler handler) {
+    return route(i(POST("/event")), handler::publish);
+  }
 }

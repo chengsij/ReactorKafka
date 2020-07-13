@@ -13,6 +13,7 @@ import reactor.kafka.sender.SenderResult;
 
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Component
 public class EventHandler {
@@ -29,14 +30,18 @@ public class EventHandler {
   }
 
   public Mono<ServerResponse> publish(ServerRequest request) {
-        return request
-            .bodyToMono(String.class)
-            .flatMap(
-                m -> {
-                  Mono<SenderRecord<Integer, String, Integer>> record = createRecord(TOPIC, 0, m, 1);
-                  return Mono.from(service.sendMessages(record));
-                })
-            .flatMap(p -> ServerResponse.created(URI.create("/event/")).build());
+    return request
+        .bodyToMono(String.class)
+        .flatMap(
+            m -> {
+              Mono<SenderRecord<Integer, String, Integer>> record = createRecord(TOPIC, 0, m, 1);
+              return Mono.from(service.sendMessages(record));
+            })
+        .flatMap(
+            p ->
+                ServerResponse.created(URI.create("/event/"))
+                    .bodyValue(
+                        String.format("Published message at %s", dateFormat.format(new Date()))));
   }
 
   public Mono<SenderResult<Integer>> publish(String message) {
@@ -44,7 +49,8 @@ public class EventHandler {
     return Mono.from(service.sendMessages(record));
   }
 
-  private Mono<SenderRecord<Integer, String, Integer>> createRecord(String topic, Integer key, String value, Integer correlationMetadata){
+  private Mono<SenderRecord<Integer, String, Integer>> createRecord(
+      String topic, Integer key, String value, Integer correlationMetadata) {
     return Mono.just(SenderRecord.create(new ProducerRecord<>(topic, key, value), 1));
   }
 }
