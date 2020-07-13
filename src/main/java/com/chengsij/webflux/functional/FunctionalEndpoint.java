@@ -17,12 +17,12 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
  */
 
 @Configuration
-@Profile("functional")
+@Profile("default")
 public class FunctionalEndpoint {
 
     @Bean
     RouterFunction<ServerResponse> routes(EventHandler handler) {
-        return route(i(POST("event")), handler::publish);
+        return route(i(POST("/event")), handler::publish);
     }
 
     private static RequestPredicate i(RequestPredicate target) {

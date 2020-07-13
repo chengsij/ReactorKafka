@@ -4,6 +4,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class KafkaService {
+public class KafkaService<T> {
   private static final Logger log = LoggerFactory.getLogger(KafkaService.class.getName());
 
   public final KafkaSender<Integer, String> sender;
@@ -36,11 +37,9 @@ public class KafkaService {
     sender = KafkaSender.create(configuration);
   }
 
-  public Flux<SenderResult<Integer>> sendMessages(String topic, String message, Integer correlationMetadata) {
+  public Flux<SenderResult<T>> sendMessages(Publisher<? extends SenderRecord<Integer, String, T>>  outboundRecords) {
     return sender
-        .send(
-            Mono.just(
-                SenderRecord.create(new ProducerRecord<>(topic, 0, message), correlationMetadata)))
+        .send(outboundRecords)
         .doOnError(e -> log.error("Send failed", e));
   }
 
